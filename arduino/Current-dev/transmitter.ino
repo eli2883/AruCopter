@@ -93,6 +93,8 @@ const char *msg;
 
 static bool transmitter_init = false;
 
+static int msg_count = 0;
+
 void setup() {
 
   Serial.begin(9600); //Debug Serial output
@@ -192,41 +194,43 @@ void loop() {
   */
 
   sendMSG("#");
-  //order: (@ starts sequence ) #,sattelite val,hdop,lat,long,age,altitude in meters,course deg,speed kmh
+  //order: (# starts sequence ) #(transmission number),S:sattelite val,HD:hdop,LAT:lat,LN:long,AG:age,ALT:altitude in meters,C:course deg,SP:speed kmh$
   const char *__buffer;
-  
-  sprintf(__buffer, "%", gps.satellites.value());
+
+  //start of sequence
+  sprintf(__buffer, "#,%,S:%,", msg_count, gps.satellites.value());
   sendMSG(__buffer);
+  ++msg_count;
   smartDelay(0);
 
-  sprintf(__buffer, "%", gps.hdop.value());
+  sprintf(__buffer, "HD:%,", gps.hdop.value());
   sendMSG(__buffer);
   smartDelay(0);
   
-  sprintf(__buffer, "%", gps.location.lat());
+  sprintf(__buffer, "LAT:%,", gps.location.lat());
   sendMSG(__buffer);
   smartDelay(0);
   
-  sprintf(__buffer, "%", gps.location.lng());
+  sprintf(__buffer, "LN:%,", gps.location.lng());
   sendMSG(__buffer);
   smartDelay(0);
   
-  sprintf(__buffer, "%", gps.location.age());
+  sprintf(__buffer, "AG:%,", gps.location.age());
   sendMSG(__buffer);
   smartDelay(0);
   
   //TODO: fix D and T for msg
   //printDateTime(gps.date, gps.time);
   
-  sprintf(__buffer, "%", gps.altitude.meters());
+  sprintf(__buffer, "ALT:%,", gps.altitude.meters());
   sendMSG(__buffer);
   smartDelay(0);
   
-  sprintf(__buffer, "%", gps.course.deg());
+  sprintf(__buffer, "C:%,", gps.course.deg());
   sendMSG(__buffer);
   smartDelay(0);
   
-  sprintf(__buffer, "%", gps.speed.kmph());
+  sprintf(__buffer, "SP:%$", gps.speed.kmph());
   sendMSG(__buffer);
   smartDelay(0);
   
