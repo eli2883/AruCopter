@@ -91,6 +91,8 @@ const char toConstChar(String string)
 */
 const char *msg;
 
+static bool transmitter_init = false;
+
 void setup() {
 
   Serial.begin(9600); //Debug Serial output
@@ -98,8 +100,9 @@ void setup() {
   //serial for gps module
   ss.begin(GPSBaud);
   
-  Serial.println("Adafruit_MPL3115A2 test!");
-  if(!driver.init())
+ // Serial.println("Adafruit_MPL3115A2 test!");
+  transmitter_init = driver.init();
+  if(!transmitter_init)
     Serial.println("transmitter init failed");
 
   /* 
@@ -130,7 +133,9 @@ void setup() {
 
 
 void loop() {
-  
+
+   if(!transmitter_init)
+    Serial.println("transmitter init failed");
   //driver.send("Hello World! ( xddd )");
   //driver.waitPacketSent();
   
