@@ -1,0 +1,6 @@
+http://stackoverflow.com/questions/22345290/how-to-get-sensor-data-over-tcp-ip-in-nodejs
+https://github.com/EmergingTechnologyAdvisors/node-serialport
+http://stackoverflow.com/questions/20549151/how-to-read-serial-port-data-from-javascript
+https://github.com/garrows/browser-serialport
+http://stackoverflow.com/questions/19665063/google-maps-live-drawing-and-updating-a-polyline
+http://stackoverflow.com/questions/25490252/howto-dynamically-update-markers-from-json-on-google-maps

@@ -1,3 +1,5 @@
+#include <SoftwareSerial.h>
+
 #include <TinyGPS++.h>
 
 #include <Wire.h>
@@ -62,6 +64,20 @@ void sendMSG(const char *__msg)
     Serial.println("trnasmitter init failed");
 }
 
+/*
+void sendSTR(String string)
+{
+  const char *char_array;
+  sprintf(char_array, "%", string);
+
+  driver.send((uint8_t *)char_array, strlen(char_array));
+  driver.waitPacketSent();
+
+  if(!driver.init())
+    Serial.println("trnasmitter init failed");
+}
+*/
+
 //no longer used
 /*
 const char toConstChar(String string)
@@ -86,7 +102,7 @@ void setup() {
   if(!driver.init())
     Serial.println("transmitter init failed");
 
-  
+  /* 
   Serial.println(F("-* GPS Module *-"));
   Serial.print(F("Using TinyGPS++ library v. ")); Serial.println(TinyGPSPlus::libraryVersion());
   Serial.println();
@@ -95,6 +111,7 @@ void setup() {
   Serial.println(F("          (deg)      (deg)       Age                      Age  (m)    --- from GPS ----  ---- to London  ----  RX    RX        Fail"));
   Serial.println(F("---------------------------------------------------------------------------------------------------------------------------------------"));
 
+  */
   /*
   sendMSG("-* GPS Module *-");
 
@@ -169,26 +186,46 @@ void loop() {
 
   */
 
+  sendMSG("#");
+  //order: (@ starts sequence ) #,sattelite val,hdop,lat,long,age,altitude in meters,course deg,speed kmh
   const char *__buffer;
   
-  spritf(__buffer, "%", gps.satellites.value());
+  sprintf(__buffer, "%", gps.satellites.value());
   sendMSG(__buffer);
-  __buffer = null;
+  smartDelay(0);
 
-  sprintf(__buffer, "%", gps.hdop.value())
+  sprintf(__buffer, "%", gps.hdop.value());
   sendMSG(__buffer);
-  __bufer = null;
+  smartDelay(0);
   
-  sprintf(__buffer, "%", __gps.location.lat());
+  sprintf(__buffer, "%", gps.location.lat());
   sendMSG(__buffer);
-  __buffer = null;
-  printFloat(gps.location.lng(), gps.location.isValid(), 12, 6);
-  printInt(gps.location.age(), gps.location.isValid(), 5);
-  printDateTime(gps.date, gps.time);
-  printFloat(gps.altitude.meters(), gps.altitude.isValid(), 7, 2);
-  printFloat(gps.course.deg(), gps.course.isValid(), 7, 2);
-  printFloat(gps.speed.kmph(), gps.speed.isValid(), 6, 2);
-  printStr(gps.course.isValid() ? TinyGPSPlus::cardinal(gps.course.value()) : "*** ", 6);
+  smartDelay(0);
+  
+  sprintf(__buffer, "%", gps.location.lng());
+  sendMSG(__buffer);
+  smartDelay(0);
+  
+  sprintf(__buffer, "%", gps.location.age());
+  sendMSG(__buffer);
+  smartDelay(0);
+  
+  //TODO: fix D and T for msg
+  //printDateTime(gps.date, gps.time);
+  
+  sprintf(__buffer, "%", gps.altitude.meters());
+  sendMSG(__buffer);
+  smartDelay(0);
+  
+  sprintf(__buffer, "%", gps.course.deg());
+  sendMSG(__buffer);
+  smartDelay(0);
+  
+  sprintf(__buffer, "%", gps.speed.kmph());
+  sendMSG(__buffer);
+  smartDelay(0);
+  
+  //printStr(gps.course.isValid() ? TinyGPSPlus::cardinal(gps.course.value()) : "*** ", 6);
 
 } //end of loop
 
@@ -220,7 +257,7 @@ static void printFloat(float val, bool valid, int len, int prec)
     Serial.print(val, prec);
     
     const char* __val;
-    sprintf(__val, "%", val)
+    sprintf(__val, "%", val);
     sendMSG(__val);
     
     int vi = abs((int)val);
@@ -252,31 +289,31 @@ static void printDateTime(TinyGPSDate &d, TinyGPSTime &t)
 {
   if (!d.isValid())
   {
-    Serial.print(F("********** "));
+    
     sendMSG("********** ");
   }
   else
   {
     char sz[32];
     sprintf(sz, "%02d/%02d/%02d ", d.month(), d.day(), d.year());
-    Serial.print(sz);
+    
     sendMSG(sz);
   }
   
   if (!t.isValid())
   {
-    Serial.print(F("******** "));
+   
     sendMSG("******** ");
   }
   else
   {
     char sz[32];
     sprintf(sz, "%02d:%02d:%02d ", t.hour(), t.minute(), t.second());
-    Serial.print(sz);
+   
     sendMSG(sz);
   }
 
-  printInt(d.age(), d.isValid(), 5);
+  
   smartDelay(0);
 }
 
