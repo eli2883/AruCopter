@@ -3,7 +3,7 @@
 
 RH_ASK driver;
 
-static bool inits = fase;
+static bool inits = false;
 
 void setup()
 {
