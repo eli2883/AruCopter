@@ -19,7 +19,12 @@
     <div id="map"></div>
     <script>
 	var raw_data;
-	var 
+	var parsed_data;
+	var lat;
+	var lng;
+	var msg_hash;
+	var altitude;
+	var speed;
 	//TODO: serial parser
 	
 	var SerialPort = require("browser-serialport").SerialPort
@@ -33,9 +38,12 @@
 	console.log('open');
 	serialPort.on('data', function(data) {
     console.log('data received: ' + data);
+	{
+	}while ()
 	});
 
 	});
+	
 
       // This example creates a 2-pixel-wide red polyline showing the path of William
       // Kingsford Smith's first trans-Pacific flight between Oakland, CA, and
