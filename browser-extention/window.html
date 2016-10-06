@@ -25,6 +25,7 @@
 	var msg_hash;
 	var altitude;
 	var speed;
+	var raw_data_index = 0;
 	//TODO: serial parser
 	
 	var SerialPort = require("browser-serialport").SerialPort
@@ -38,8 +39,32 @@
 	console.log('open');
 	serialPort.on('data', function(data) {
     console.log('data received: ' + data);
-	{
-	}while ()
+	
+		for (i = 0; i < 512; ++i)
+		{
+			if(data[i] == "$")
+			{
+				i += 2;
+				// 12 digits max (excluding decimal point)
+				for(int y = 0; i < 9; ++y)
+				{
+					var temp; 
+					if(data[i] != "$", ",")
+					{
+						temp[y] = data[i];
+						++i;
+						++y;
+						
+					}
+					
+					if(data[i] == ",")
+					; //TODO: FInd some way of storing multi characters as 1 integer
+				}
+			}
+			
+			++i;
+			
+		}
 	});
 
 	});
