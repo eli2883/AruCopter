@@ -60,8 +60,12 @@ void sendMSG(const char *__msg)
   driver.send((uint8_t *)__msg, strlen(__msg));
   driver.waitPacketSent();
 
+  delay(1000);
+
   if(!driver.init())
     Serial.println("trnasmitter init failed");
+
+
 }
 
 /*
@@ -192,6 +196,8 @@ void loop() {
     sendMSG("No GPS data received: check wiring");
 
   */
+  sendMSG("Hello World");
+  delay(1000);
 
   sendMSG("#");
   //order: (# starts sequence ) #(transmission number),S:sattelite val,HD:hdop,LAT:lat,LN:long,AG:age,ALT:altitude in meters,C:course deg,SP:speed kmh$
@@ -225,6 +231,7 @@ void loop() {
   sprintf(__buffer, "ALT:%,", gps.altitude.meters());
   sendMSG(__buffer);
   smartDelay(0);
+  Serial.println(__buffer);
   
   sprintf(__buffer, "C:%,", gps.course.deg());
   sendMSG(__buffer);
@@ -235,6 +242,9 @@ void loop() {
   smartDelay(0);
   
   //printStr(gps.course.isValid() ? TinyGPSPlus::cardinal(gps.course.value()) : "*** ", 6);
+
+  sendMSG("Hello World");
+  delay(1000);
 
 } //end of loop
 
