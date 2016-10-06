@@ -54,10 +54,32 @@ TinyGPSPlus gps;
 SoftwareSerial ss(RXPin, TXPin);
 
 
-void sendMSG(const char *__msg)
+void sendMSG(const char *msg)
 {
+  int max_msg_size = 8; //max msg size is 8
+  int msg_size = strlen(msg);
+  int current_char = 0;
+  
+  const char *__msg;
 
-  driver.send((uint8_t *)__msg, strlen(__msg));
+  
+  int y = 0;
+
+  const char short_msg[7]; // 8 chars
+  {
+    if(!(msg_size - 1 > 0))
+    {
+      y = 0;
+      //send msg if __msg != null
+      return;
+    }
+    
+    if(msg_size - current_char > 0 && __msg[current_char] != null)
+    {
+      
+    }
+  }while (y == 0);
+  driver.send((uint8_t *)msg, strlen(msg));
   driver.waitPacketSent();
 
   if(!driver.init())
