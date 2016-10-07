@@ -1,4 +1,5 @@
-s#include <SoftwareSerial.h>
+//transmitter_current
+#include <SoftwareSerial.h>
 
 #include <TinyGPS++.h>
 
@@ -67,7 +68,7 @@ void sendMSG(const char *msg)
 
   const char short_msg[7]; // 8 chars
   {
-    if(!(msg_size - 1 > 0))
+    if(!(msg_size - current_char > 0))
     {
       y = 0;
       //send msg if __msg != null
