@@ -66,7 +66,8 @@ void sendMSG(const char *msg)
   
   int y = 0;
 
-  const char short_msg[7]; // 8 chars
+  const char short_msg[max_msg_size - 1]; //bc includes 0
+  
   {
     if(!(msg_size - current_char > 0))
     {

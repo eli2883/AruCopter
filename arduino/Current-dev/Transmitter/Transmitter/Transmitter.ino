@@ -73,14 +73,12 @@ void sendMSG(const char *msg)
     
     if(!(msg_size - current_char > 0))
     {
-      y = 0;
       //send msg if __msg != null
-      if(msg != null)
-      {
-        driver.send((uint8_t *)short_msg, strlen(short_msg));
-        driver.waitPacketSent();
-        delay(1000) //just to be safe
-      }
+      
+      driver.send((uint8_t *)short_msg, strlen(short_msg));
+      driver.waitPacketSent();
+      delay(1000) //just to be safe
+        
       return;
     }
     
