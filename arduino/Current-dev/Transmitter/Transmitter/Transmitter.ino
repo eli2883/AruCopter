@@ -65,7 +65,7 @@ void sendMSG(const char *msg)
   
   int y = 0;
 
-  const char short_msg[max_msg_size - 1]; // 8 chars
+  char short_msg[msg_size - 1]; // 8 chars
   
   {
     if(strlen(msg) > 0)
@@ -77,19 +77,24 @@ void sendMSG(const char *msg)
       
       driver.send((uint8_t *)short_msg, strlen(short_msg));
       driver.waitPacketSent();
-      delay(1000) //just to be safe
-        
+      digitalWrite(13, HIGH);
+      delay(1000); //just to be safe
+
+      
+      digitalWrite(13, LOW);  
       return;
     }
     
-    if(msg_size - current_char > 0 && __msg[current_char] != null)
+    if(msg_size - current_char > 0)
     {
   
    
       for(int i = 0; i < 8; ++i)
       {
-        short_msg[i] = msg[current_char]
-        ++current_char;
+        short_msg[i] = msg[current_char];
+        current_char += 1;
+
+        
       }
 
       driver.send((uint8_t *)short_msg, strlen(short_msg));
@@ -146,6 +151,12 @@ void setup() {
   if(!transmitter_init)
     Serial.println("transmitter init failed");
 
+   pinMode(13, OUTPUT); //for led
+   pinMode(8, OUTPUT);
+
+   if(!transmitter_init)
+      digitalWrite(8, HIGH);
+
   /* 
   Serial.println(F("-* GPS Module *-"));
   Serial.print(F("Using TinyGPS++ library v. ")); Serial.println(TinyGPSPlus::libraryVersion());
@@ -170,73 +181,33 @@ void setup() {
   sendMSG("---------------------------------------------------------------------------------------------------------------------------------------\n");
 
   */
+
+  digitalWrite(13, HIGH);
+  delay(1000);
+  digitalWrite(13, LOW);
 }
 
 
 void loop() {
 
+  sendMSG("Hello");
+      
    if(!transmitter_init)
     Serial.println("transmitter init failed");
-  //driver.send("Hello World! ( xddd )");
+  //driver.send("Hello World!", strlen("Hello World!"));
   //driver.waitPacketSent();
   
   //sprintf(combinedArray, "Air Pressure: %s Pascales\n", pascals);
   //sendMSG(combinedArray);
 
-  /*
-    static const double LONDON_LAT = 51.508131, LONDON_LON = -0.128002;
-
-  printInt(gps.satellites.value(), gps.satellites.isValid(), 5);
-  printInt(gps.hdop.value(), gps.hdop.isValid(), 5);
-  printFloat(gps.location.lat(), gps.location.isValid(), 11, 6);
-  printFloat(gps.location.lng(), gps.location.isValid(), 12, 6);
-  printInt(gps.location.age(), gps.location.isValid(), 5);
-  printDateTime(gps.date, gps.time);
-  printFloat(gps.altitude.meters(), gps.altitude.isValid(), 7, 2);
-  printFloat(gps.course.deg(), gps.course.isValid(), 7, 2);
-  printFloat(gps.speed.kmph(), gps.speed.isValid(), 6, 2);
-  printStr(gps.course.isValid() ? TinyGPSPlus::cardinal(gps.course.value()) : "*** ", 6);
-
-  unsigned long distanceKmToLondon =
-    (unsigned long)TinyGPSPlus::distanceBetween(
-      gps.location.lat(),
-      gps.location.lng(),
-      LONDON_LAT, 
-      LONDON_LON) / 1000;
-  //printInt(distanceKmToLondon, gps.location.isValid(), 9);
-
-  double courseToLondon =
-    TinyGPSPlus::courseTo(
-      gps.location.lat(),
-      gps.location.lng(),
-      LONDON_LAT, 
-      LONDON_LON);
-
-  //printFloat(courseToLondon, gps.location.isValid(), 7, 2);
-
-  const char *cardinalToLondon = TinyGPSPlus::cardinal(courseToLondon);
-
-  printStr(gps.location.isValid() ? cardinalToLondon : "*** ", 6);
-
-  printInt(gps.charsProcessed(), true, 6);
-  printInt(gps.sentencesWithFix(), true, 10);
-  printInt(gps.failedChecksum(), true, 9);
-  Serial.println();
-  sendMSG("\n");
   
-  smartDelay(1000);
 
-  if (millis() > 5000 && gps.charsProcessed() < 10)
-    Serial.println(F("No GPS data received: check wiring"));
-    sendMSG("No GPS data received: check wiring");
-
-  */
 
   sendMSG("Hello World");
   delay(1000);
 
   
->>>>>>> origin/dev
+
   //order: (# starts sequence ) #(transmission number),S:sattelite val,HD:hdop,LAT:lat,LN:long,AG:age,ALT:altitude in meters,C:course deg,SP:speed kmh$
   const char *__buffer;
 
@@ -245,6 +216,9 @@ void loop() {
   sendMSG(__buffer);
   ++msg_count;
   smartDelay(0);
+
+  if(sizeof(__buffer) > 0)
+    digitalWrite(13, HIGH);
 
   sprintf(__buffer, "HD:%,", gps.hdop.value());
   sendMSG(__buffer);

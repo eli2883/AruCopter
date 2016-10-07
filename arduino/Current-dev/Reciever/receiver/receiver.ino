@@ -30,6 +30,9 @@ void setup()
     Serial.begin(9600); // Debugging only
     if (!driver.init())
          Serial.println("init failed");
+
+    else
+      Serial.println("sucessful init");
 }
 
 void loop()
@@ -40,6 +43,8 @@ void loop()
     {
       int i;
       // Message with a good checksum received, dump it.
-      Serial.println((char*)buf);         
+      Serial.print((char*)buf);         
     }
+    if (driver.recv(buf, &buflen))
+      Serial.print("bad msg recieved");
 }
