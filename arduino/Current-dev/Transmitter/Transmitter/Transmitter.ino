@@ -46,6 +46,7 @@ RH_ASK driver;
 */
 static const int RXPin = 4, TXPin = 3;
 static const uint32_t GPSBaud = 9600;
+static int max_msg_size = 8; //max msg size is 8
 
 // The TinyGPS++ object
 TinyGPSPlus gps;
@@ -54,14 +55,54 @@ TinyGPSPlus gps;
 SoftwareSerial ss(RXPin, TXPin);
 
 
-void sendMSG(const char *__msg)
+void sendMSG(const char *msg)
 {
+  int msg_size = strlen(msg);
+  int current_char = 0;
+  
+  const char *__msg;
 
-  driver.send((uint8_t *)__msg, strlen(__msg));
-  driver.waitPacketSent();
+  
+  int y = 0;
 
-  if(!driver.init())
-    Serial.println("trnasmitter init failed");
+  const char short_msg[max_msg_size - 1]; // 8 chars
+  
+  {
+    if(strlen(msg) > 0)
+    {
+    
+    if(!(msg_size - current_char > 0))
+    {
+      y = 0;
+      //send msg if __msg != null
+      if(msg != null)
+      {
+        driver.send((uint8_t *)short_msg, strlen(short_msg));
+        driver.waitPacketSent();
+        delay(1000) //just to be safe
+      }
+      return;
+    }
+    
+    if(msg_size - current_char > 0 && __msg[current_char] != null)
+    {
+  
+   
+      for(int i = 0; i < 8; ++i)
+      {
+        short_msg[i] = msg[current_char]
+        ++current_char;
+      }
+
+      driver.send((uint8_t *)short_msg, strlen(short_msg));
+      driver.waitPacketSent();
+      
+    }
+    
+    }
+  }while (y == 0);
+
+
 }
 
 /*
@@ -193,7 +234,11 @@ void loop() {
 
   */
 
-  sendMSG("#");
+  sendMSG("Hello World");
+  delay(1000);
+
+  
+>>>>>>> origin/dev
   //order: (# starts sequence ) #(transmission number),S:sattelite val,HD:hdop,LAT:lat,LN:long,AG:age,ALT:altitude in meters,C:course deg,SP:speed kmh$
   const char *__buffer;
 
@@ -225,16 +270,20 @@ void loop() {
   sprintf(__buffer, "ALT:%,", gps.altitude.meters());
   sendMSG(__buffer);
   smartDelay(0);
+  Serial.println(__buffer);
   
   sprintf(__buffer, "C:%,", gps.course.deg());
   sendMSG(__buffer);
   smartDelay(0);
   
-  sprintf(__buffer, "SP:%$", gps.speed.kmph());
+  sprintf(__buffer, "SP:%$\n", gps.speed.kmph());
   sendMSG(__buffer);
   smartDelay(0);
   
   //printStr(gps.course.isValid() ? TinyGPSPlus::cardinal(gps.course.value()) : "*** ", 6);
+
+  sendMSG("Hello World");
+  delay(1000);
 
 } //end of loop
 
