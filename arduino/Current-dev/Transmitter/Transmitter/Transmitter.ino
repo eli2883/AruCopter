@@ -196,10 +196,14 @@ void loop() {
     sendMSG("No GPS data received: check wiring");
 
   */
+<<<<<<< HEAD
   sendMSG("Hello World");
   delay(1000);
 
   sendMSG("#");
+=======
+  
+>>>>>>> origin/dev
   //order: (# starts sequence ) #(transmission number),S:sattelite val,HD:hdop,LAT:lat,LN:long,AG:age,ALT:altitude in meters,C:course deg,SP:speed kmh$
   const char *__buffer;
 
@@ -237,7 +241,7 @@ void loop() {
   sendMSG(__buffer);
   smartDelay(0);
   
-  sprintf(__buffer, "SP:%$", gps.speed.kmph());
+  sprintf(__buffer, "SP:%$\n", gps.speed.kmph());
   sendMSG(__buffer);
   smartDelay(0);
   
