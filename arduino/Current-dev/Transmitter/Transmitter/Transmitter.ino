@@ -57,7 +57,13 @@ SoftwareSerial ss(RXPin, TXPin);
 
 void sendMSG(const char *msg)
 {
+  const char *debug;
+  digitalWrite(13, HIGH);
   int msg_size = strlen(msg);
+
+  sprintf(debug, "MSG Size: %", msg_size);
+  Serial.println(debug);
+  
   int current_char = 0;
   
   const char *__msg;
@@ -68,11 +74,15 @@ void sendMSG(const char *msg)
   char short_msg[msg_size - 1]; // 8 chars
   
   {
+
+    Serial.println("enered while loop");
     if(strlen(msg) > 0)
     {
     
     if(!(msg_size - current_char > 0))
     {
+
+      Serial.println("Ther is more stuff to send!");
       //send msg if __msg != null
       
       driver.send((uint8_t *)short_msg, strlen(short_msg));
@@ -88,24 +98,31 @@ void sendMSG(const char *msg)
     if(msg_size - current_char > 0)
     {
   
-   
+      Serial.println("more stuff to send");
+      
       for(int i = 0; i < 8; ++i)
       {
+        Serial.println("begin loading buffer");
         short_msg[i] = msg[current_char];
         current_char += 1;
 
         
       }
 
+      Serial.println("sending msg");
       driver.send((uint8_t *)short_msg, strlen(short_msg));
+      Serial.println("wating for send");
       driver.waitPacketSent();
       
     }
     
     }
+    return;
   }while (y == 0);
 
+  digitalWrite(13, LOW);
 
+  Serial.println("ending sendMSG()");
 }
 
 /*
@@ -141,6 +158,7 @@ static int msg_count = 0;
 
 void setup() {
 
+
   Serial.begin(9600); //Debug Serial output
 
   //serial for gps module
@@ -151,6 +169,10 @@ void setup() {
   if(!transmitter_init)
     Serial.println("transmitter init failed");
 
+   while (ss.available() > 0)
+   {
+    if (gps.encode(ss.read()))
+    {
    pinMode(13, OUTPUT); //for led
    pinMode(8, OUTPUT);
 
@@ -190,8 +212,20 @@ void setup() {
 
 void loop() {
 
+  Serial.println("starting loop");
+
+    const char *randommsg = "asdffdf";
+  driver.send((uint8_t *)randommsg, strlen(randommsg));
+    driver.waitPacketSent();
+
+  delay(1000);
+
+  int agew = gps.location.age();
+  sprintf(randommsg, "ag:%", agew);
+  driver.send((uint8_t *)randommsg, strlen(randommsg));
+    driver.waitPacketSent();
   sendMSG("Hello");
-      
+  
    if(!transmitter_init)
     Serial.println("transmitter init failed");
   //driver.send("Hello World!", strlen("Hello World!"));
@@ -213,12 +247,21 @@ void loop() {
 
   //start of sequence
   sprintf(__buffer, "#,%,S:%,", msg_count, gps.satellites.value());
+
+  driver.send((uint8_t *)__buffer, strlen(__buffer));
+  driver.waitPacketSent();
+
+  delay(1000);
+  
   sendMSG(__buffer);
   ++msg_count;
   smartDelay(0);
 
+
+  if(strlen(__buffer) > 0)
+    digitalWrite(8, HIGH);
   if(sizeof(__buffer) > 0)
-    digitalWrite(13, HIGH);
+    digitalWrite(8, HIGH);
 
   sprintf(__buffer, "HD:%,", gps.hdop.value());
   sendMSG(__buffer);
@@ -233,9 +276,21 @@ void loop() {
   smartDelay(0);
   
   sprintf(__buffer, "AG:%,", gps.location.age());
+
+  driver.send((uint8_t *)__buffer, strlen(__buffer));
+  driver.waitPacketSent();
+
+  delay(1000);
+  
   sendMSG(__buffer);
   smartDelay(0);
-  
+
+  driver.send((uint8_t *)__buffer, strlen(__buffer));
+    driver.waitPacketSent();
+
+  delay(1000);
+
+  digitalWrite(8, LOW);
   //TODO: fix D and T for msg
   //printDateTime(gps.date, gps.time);
   
@@ -257,6 +312,8 @@ void loop() {
   sendMSG("Hello World");
   delay(1000);
 
+} //end of if
+   } //end of while
 } //end of loop
 
 

@@ -43,8 +43,8 @@ void loop()
     {
       int i;
       // Message with a good checksum received, dump it.
-      Serial.print((char*)buf);         
+      Serial.println((char*)buf);         
     }
-    if (driver.recv(buf, &buflen))
-      Serial.print("bad msg recieved");
+    //if (!(driver.recv(buf, &buflen)))
+      //Serial.println("bad msg recieved");
 }
